@@ -1,0 +1,8 @@
+---
+
+- name: Apply Apache role
+  hosts: all
+  become: true
+
+  roles:
+    - apache

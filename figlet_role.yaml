@@ -1,0 +1,7 @@
+---
+- name: Apply login banner role to all servers
+  hosts: all
+  become: true
+ 
+  roles:
+    - figlet

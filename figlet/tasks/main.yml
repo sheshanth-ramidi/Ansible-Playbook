@@ -1,0 +1,28 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for figlet
+- name: Install figlet
+  ansible.builtin.apt:
+    name: figlet
+    state: present
+
+- name: Create login banner using template
+  ansible.builtin.template:
+    src: motd.j2
+    dest: /etc/motd
+    mode: '0644'
+
+- name: Copy banner script (if required)
+  ansible.builtin.copy:
+    src: banner_script.sh
+    dest: /usr/local/bin/banner_script.sh
+    mode: '0755'
+    owner: root
+    group: root
+
+- name: Set banner script in profile (optional)
+  ansible.builtin.lineinfile:
+    path: /etc/profile
+    line: "/usr/local/bin/banner_script.sh"
+    insertafter: EOF
+    state: present 

@@ -1,0 +1,38 @@
+---
+- name: Install and start Nginx
+  hosts: all
+  become: yes
+ 
+  tasks:
+    - name: Stop Apache if running
+      service:
+        name: apache2
+        state: stopped
+        enabled: no
+      ignore_errors: yes  # In case apache2 is not installed (for Ubuntu)
+ 
+    - name: Stop httpd if running (for RHEL/CentOS)
+      service:
+        name: httpd
+        state: stopped
+        enabled: no
+      ignore_errors: yes
+ 
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+      when: ansible_facts['os_family'] == "Debian"
+ 
+    - name: Install Nginx (RHEL/CentOS)
+      yum:
+        name: nginx
+        state: present
+      when: ansible_facts['os_family'] == "RedHat"
+ 
+    - name: Start and enable Nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+ 

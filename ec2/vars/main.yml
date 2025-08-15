@@ -1,0 +1,17 @@
+#SPDX-License-Identifier: MIT-0
+---
+# vars file for ec2
+type: t2.micro
+region: ap-south-1
+group: default
+IP: true
+ec2_instance:
+    - name: ubuntu-node-1
+      image: ami-0f918f7e67a3323f0
+    - name: centos-node-1
+      image: ami-0144277607031eca2
+    - name: ubuntu-node-2
+      image: ami-0f918f7e67a3323f0
+
+
+

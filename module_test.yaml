@@ -1,0 +1,99 @@
+---
+- name: Full Ansible Module Test
+  hosts: all
+  become: true
+ 
+  tasks:
+    - name: Run a basic command (ansible.builtin.command)
+      ansible.builtin.command: echo "This is a command module"
+ 
+    - name: Run a shell command using pipe (ansible.builtin.shell)
+      ansible.builtin.shell: "echo Hello from Shell | tee /tmp/shell_output.txt"
+ 
+    - name: Run a local script on the remote host (ansible.builtin.script)
+      ansible.builtin.script: ./install.sh
+ 
+    - name: Install and start Nginx
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Stop Apache if running
+      service:
+        name: apache2
+        state: stopped
+        enabled: no
+      ignore_errors: yes  # In case apache2 is not installed (for Ubuntu)
+
+    - name: Stop httpd if running (for RHEL/CentOS)
+      service:
+        name: httpd
+        state: stopped
+        enabled: no
+      ignore_errors: yes
+
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Install Nginx (RHEL/CentOS)
+      yum:
+        name: nginx
+        state: present
+      when: ansible_facts['os_family'] == "RedHat"
+
+    - name: Start and enable Nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+       
+    - name: Stop nginx if running
+      service:
+        name: nginx
+        state: stopped
+        enabled: no
+      ignore_errors: yes  # In case apache2 is not installed (for Ubuntu)
+
+    - name: Stop httpd if running (for RHEL/CentOS)
+      service:
+        name: httpd
+        state: stopped
+        enabled: no
+      ignore_errors: yes
+
+    - name: Install apache2
+      apt:
+        name: apache2
+        state: present
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Install apache2 (RHEL/CentOS)
+      yum:
+        name: apache2
+        state: present
+      when: ansible_facts['os_family'] == "RedHat"
+
+    - name: Start and enable apache2
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+
+ 
+
+    - name: Copy index file (ansible.builtin.copy)
+      ansible.builtin.copy:
+        src: index.html
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: '0644'
+ 
+    - name: Idempotency example - Create user only if doesn't exist (ansible.builtin.user)
+      ansible.builtin.user:
+        name: ansibleuser
+        state: present
+ 

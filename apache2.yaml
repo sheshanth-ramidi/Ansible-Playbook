@@ -1,0 +1,38 @@
+---
+- name: Install and start apache2
+  hosts: all
+  become: yes
+ 
+  tasks:
+    - name: Stop nginx if running
+      service:
+        name: nginx
+        state: stopped
+        enabled: no
+      ignore_errors: yes  # In case apache2 is not installed (for Ubuntu)
+ 
+    - name: Stop httpd if running (for RHEL/CentOS)
+      service:
+        name: httpd
+        state: stopped
+        enabled: no
+      ignore_errors: yes
+ 
+    - name: Install apache2
+      apt:
+        name: apache2
+        state: present
+      when: ansible_facts['os_family'] == "Debian"
+ 
+    - name: Install apache2 (RHEL/CentOS)
+      yum:
+        name: apache2
+        state: present
+      when: ansible_facts['os_family'] == "RedHat"
+ 
+    - name: Start and enable apache2
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+ 
