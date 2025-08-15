@@ -1,0 +1,26 @@
+---
+- name: Demonstrate failed_when
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Create important_file.txt
+      ansible.builtin.file:
+        path: ./important_file.txt
+        state: touch
+      register: create_file_output
+
+    - ansible.builtin.debug:
+        var: create_file_output
+
+    - name: Verify file creation and fail if a condition is met
+      ansible.builtin.command: ls -l ./important_file.txt
+      register: verify_output
+      failed_when: "'important_file.txt' not in verify_output.stdout"
+      
+    - ansible.builtin.debug:
+        var: verify_output
+
+    - name: Clean up the file
+      ansible.builtin.file:
+        path: ./important_file.txt
+        state: absent
